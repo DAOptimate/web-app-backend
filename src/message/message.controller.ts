@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -16,6 +18,7 @@ export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @Post()
+  @UsePipes(new ValidationPipe())
   create(@Body() createMessageDto: CreateMessageDto) {
     return this.messageService.create(createMessageDto);
   }
