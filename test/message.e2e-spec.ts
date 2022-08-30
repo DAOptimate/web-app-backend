@@ -4,9 +4,11 @@ import * as request from 'supertest';
 import { MessageModule } from '../src/message/message.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from '../src/message/entities/message.entity';
+import { Repository } from 'typeorm';
 
 describe('MessageController (e2e)', () => {
   let app: INestApplication;
+  let repository: Repository<Message>;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -26,10 +28,13 @@ describe('MessageController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    repository = app.get('MessageRepository');
+
     await app.init();
   });
 
   afterAll(async () => {
+    await repository.query('DELETE FROM message;');
     await app.close();
   });
 
@@ -42,6 +47,10 @@ describe('MessageController (e2e)', () => {
   //   });
 
   it('/message (POST) should save a new message', async () => {
+    // message table should be empty
+    const messagesBefore = await repository.find();
+    expect(messagesBefore).toHaveLength(0);
+
     const message = {
       name: 'satoshi',
       email: 'satoshi@bitcoin.com',
@@ -49,12 +58,14 @@ describe('MessageController (e2e)', () => {
       message: 'plz where are my keys',
     };
 
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/message')
       .send(message)
       .expect(201);
 
-    // TODO: check message saved in DB
+    // should have one message now
+    const messagesAfter = await repository.find();
+    expect(messagesAfter).toHaveLength(1);
   });
 
   it('/message (POST) should reject invalid requests', async () => {
