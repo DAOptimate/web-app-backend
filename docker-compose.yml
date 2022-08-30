@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  daoptimate_dev_db:
+    container_name: daoptimate_dev_db
+    platform: linux/x86_64
+    image: mysql:8.0.29
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'daoptimate_dev_db'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3307:3306'
+    expose:
+      - '3307'
+    volumes:
+      - daoptimate_dev_db:/var/lib/mysql
+
+volumes:
+  daoptimate_dev_db:
