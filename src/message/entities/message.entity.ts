@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'message' })
 export class Message {
@@ -17,9 +23,9 @@ export class Message {
   @Column()
   message: string;
 
-  @Column({ default: false })
-  isRead: boolean;
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @Column({ default: new Date().getTime() / 1000 })
-  date: number;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
