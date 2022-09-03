@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { NoteService } from './note.service';
 import { CreateNoteDto } from './dto/create-note.dto';
@@ -16,6 +18,7 @@ export class NoteController {
   constructor(private readonly noteService: NoteService) {}
 
   @Post()
+  @UsePipes(new ValidationPipe())
   create(@Body() createNoteDto: CreateNoteDto) {
     return this.noteService.create(createNoteDto);
   }
