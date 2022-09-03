@@ -17,7 +17,7 @@ export class MessageService {
   }
 
   findAll() {
-    return `This action returns all message`;
+    return this.messageRepository.find();
   }
 
   findOne(id: number) {
