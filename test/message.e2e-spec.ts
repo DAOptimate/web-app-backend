@@ -34,18 +34,16 @@ describe('MessageController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await repository.query('DELETE FROM message;');
     await app.close();
   });
 
-  //   it('/message (GET) should return all messages', async () => {
-  //     const response = await request(app.getHttpServer())
-  //       .get('/message')
-  //       .expect(200);
+  afterEach(async () => {
+    await repository.query('DELETE FROM message;');
+  });
 
-  //      expect(response.body).toHaveLength(0);
-  //   });
-
+  /**
+   * CREATE
+   */
   it('/message (POST) should save a new message', async () => {
     // message table should be empty
     const messagesBefore = await repository.find();
@@ -119,5 +117,32 @@ describe('MessageController (e2e)', () => {
       .expect(400);
 
     expect(noDataResponse.body.message).toHaveLength(3);
+  });
+
+  /**
+   * READ
+   */
+
+  it('/message (GET) should return all messages', async () => {
+    await repository.save([
+      {
+        name: 'Mr Satoshi',
+        email: 'satoshi@bitcoin.com',
+        company: 'Bitcoin ltd',
+        message: "Hey guys i'm not dead can you help me find my keys plz",
+      },
+      {
+        name: 'Charles',
+        email: 'charles@cardano.com',
+        company: 'Cardano',
+        message: 'Hi frens can I interest you in some ADA',
+      },
+    ]);
+
+    const response = await request(app.getHttpServer())
+      .get('/message')
+      .expect(200);
+
+    expect(response.body).toHaveLength(2);
   });
 });
