@@ -10,7 +10,7 @@ export class SeederModule {
     username: 'root',
     password: 'password',
     database: 'daoptimate_dev_db',
-    entities: [Message],
+    entities: ['src/**/*.entity.ts'],
     synchronize: true,
   });
 
