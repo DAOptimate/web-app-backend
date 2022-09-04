@@ -20,8 +20,11 @@ export class MessageService {
     return this.messageRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} message`;
+  findById(id: number) {
+    return this.messageRepository.findOne({
+      where: { id },
+      relations: ['notes'],
+    });
   }
 
   update(id: number, updateMessageDto: UpdateMessageDto) {
