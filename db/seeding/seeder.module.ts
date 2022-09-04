@@ -16,6 +16,8 @@ export class SeederModule {
 
   public static async run() {
     await this.dataSource.initialize();
+    // start with fresh DB (passing true here drops tables for registered entities before syncing)
+    await this.dataSource.synchronize(true);
 
     const messageRepository = this.dataSource.getRepository(Message);
 
@@ -37,8 +39,6 @@ export class SeederModule {
 
   public static async clean() {
     await this.dataSource.initialize();
-
-    // passing true here drops tables for registered entities before syncing
     await this.dataSource.synchronize(true);
   }
 }
