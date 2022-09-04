@@ -4,8 +4,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
+import { Message } from '../../message/entities/message.entity';
 
 @Entity({ name: 'note' })
 export class Note {
@@ -14,15 +15,13 @@ export class Note {
 
   @Column()
   @IsNotEmpty()
-  messageId: string;
-
-  //   @Column()
-  //   author: string;
-
-  @Column()
-  @IsNotEmpty()
   content: string;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @ManyToOne(() => Message, (message) => message.notes, {
+    onDelete: 'CASCADE',
+  })
+  message: Message;
 }

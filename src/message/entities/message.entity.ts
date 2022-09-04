@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Note } from '../../note/entities/note.entity';
 
 @Entity({ name: 'message' })
 export class Message {
@@ -23,9 +25,15 @@ export class Message {
   @Column()
   message: string;
 
+  @Column({ default: false })
+  isRead: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Note, (note) => note.message)
+  notes: Note[];
 }
