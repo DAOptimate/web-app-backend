@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@faker-js/faker': ^7.5.0
   '@nestjs/cli': ^9.0.0
   '@nestjs/common': ^9.0.0
   '@nestjs/core': ^9.0.0
@@ -50,6 +51,7 @@ dependencies:
   typeorm: 0.3.8_pa4ea3wjef6s4gsskhbyci3cte
 
 devDependencies:
+  '@faker-js/faker': 7.5.0
   '@nestjs/cli': 9.1.1
   '@nestjs/schematics': 9.0.1_typescript@4.8.2
   '@nestjs/testing': 9.0.11_z6gh3n3qpn6ig2eqi2q57zofvq
@@ -541,6 +543,11 @@ packages:
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@faker-js/faker/7.5.0:
+    resolution: {integrity: sha512-8wNUCCUHvfvI0gQpDUho/3gPzABffnCn5um65F8dzQ86zz6dlt4+nmAA7PQUc8L+eH+9RgR/qzy5N/8kN0Ozdw==}
+    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
     dev: true
 
   /@humanwhocodes/config-array/0.5.0:
