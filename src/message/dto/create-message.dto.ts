@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Length } from 'class-validator';
+import { IsEmail, Length } from 'class-validator';
 
 export class CreateMessageDto {
   @Length(1, 100)
