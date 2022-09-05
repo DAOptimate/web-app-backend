@@ -4,21 +4,41 @@ This is a [NestJS](http://nestjs.com/) app to receive contact form submissions a
 
 ## Running Locally
 
-You'll need to have docker installed to run the database container and pnpm to install the project dependencies.
+You'll need to have docker installed to run the database containers and pnpm to install the project dependencies.
 
 ```bash
 # install dependencies
 $ pnpm install
 
-# start the development database
-$ docker compose up
+# start the development and test databases
+$ docker compose up -d
 
 # start the app in development mode
 $ pnpm start:dev
 ```
 
-// TODO: explain test db added
+## Run Tests
 
-// TODO: explain scripts to seed and clean DB
+```bash
+# run e2e tests
+$ pnpm test:e2e
 
-// TODO: explain how to run tests
+# or while developing run run e2e tests in watch mode
+$ pnpm test:e2e:watch
+```
+
+## Seed DB
+
+Seed the development DB with some test data. Useful if you're working on the front end.
+
+```bash
+$ pnpm seed:dev
+```
+
+## Clean DB
+
+Reset the DB removing and reinitializing all tables
+
+```bash
+$ pnpm clean:dev
+```
