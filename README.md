@@ -19,6 +19,8 @@ $ pnpm start:dev
 
 ## Run Tests
 
+Make sure the test db is live (`$ docker compose up -d`)
+
 ```bash
 # run e2e tests
 $ pnpm test:e2e
