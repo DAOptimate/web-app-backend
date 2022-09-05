@@ -16,3 +16,9 @@ $ docker compose up
 # start the app in development mode
 $ pnpm start:dev
 ```
+
+// TODO: explain test db added
+
+// TODO: explain scripts to seed and clean DB
+
+// TODO: explain how to run tests
