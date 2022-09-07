@@ -5,10 +5,13 @@ import { MessageModule } from '../src/message/message.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from '../src/message/entities/message.entity';
 import { Repository } from 'typeorm';
+import { Note } from '../src/note/entities/note.entity';
 
 describe('MessageController (e2e)', () => {
   let app: INestApplication;
-  let repository: Repository<Message>;
+  let messageRepository: Repository<Message>;
+  let noteRepository: Repository<Note>;
+  let message1: Message;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -20,7 +23,7 @@ describe('MessageController (e2e)', () => {
           username: 'root',
           password: 'password',
           database: 'daoptimate_test_db',
-          entities: [Message],
+          entities: [Message, Note],
           synchronize: true,
         }),
         MessageModule,
@@ -28,7 +31,28 @@ describe('MessageController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    repository = app.get('MessageRepository');
+    messageRepository = app.get('MessageRepository');
+    noteRepository = app.get('NoteRepository');
+
+    await messageRepository.query('DELETE FROM message;');
+    await messageRepository.query('DELETE FROM note;');
+
+    const message1Data = messageRepository.create({
+      name: 'Bryan',
+      email: 'brian@cryptopumps.com',
+      company: 'crypto pumps',
+      message: 'we do best crypto pumps call now for win',
+    });
+    message1 = await messageRepository.save(message1Data);
+    const note1 = noteRepository.create({
+      message: message1,
+      content: "I'm a note attached to message1",
+    });
+    const note2 = noteRepository.create({
+      message: message1,
+      content: "I'm another note attached to message1",
+    });
+    await noteRepository.save([note1, note2]);
 
     await app.init();
   });
@@ -37,17 +61,13 @@ describe('MessageController (e2e)', () => {
     await app.close();
   });
 
-  afterEach(async () => {
-    await repository.query('DELETE FROM message;');
-  });
-
   /**
    * CREATE
    */
   it('/message (POST) should save a new message', async () => {
-    // message table should be empty
-    const messagesBefore = await repository.find();
-    expect(messagesBefore).toHaveLength(0);
+    // message table should have the one message we created in beforeAll()
+    const messagesBefore = await messageRepository.find();
+    expect(messagesBefore).toHaveLength(1);
 
     const message = {
       name: 'satoshi',
@@ -61,9 +81,9 @@ describe('MessageController (e2e)', () => {
       .send(message)
       .expect(201);
 
-    // should have one message now
-    const messagesAfter = await repository.find();
-    expect(messagesAfter).toHaveLength(1);
+    // should have two messages now
+    const messagesAfter = await messageRepository.find();
+    expect(messagesAfter).toHaveLength(2);
   });
 
   it('/message (POST) should reject invalid requests', async () => {
@@ -124,25 +144,22 @@ describe('MessageController (e2e)', () => {
    */
 
   it('/message (GET) should return all messages', async () => {
-    await repository.save([
-      {
-        name: 'Mr Satoshi',
-        email: 'satoshi@bitcoin.com',
-        company: 'Bitcoin ltd',
-        message: "Hey guys i'm not dead can you help me find my keys plz",
-      },
-      {
-        name: 'Charles',
-        email: 'charles@cardano.com',
-        company: 'Cardano',
-        message: 'Hi frens can I interest you in some ADA',
-      },
-    ]);
-
     const response = await request(app.getHttpServer())
       .get('/message')
       .expect(200);
 
+    // should return the two messages we seeded
     expect(response.body).toHaveLength(2);
+    // notes should not be attached
+    expect(response.body.notes).toBe(undefined);
+  });
+
+  it('/message:id (GET) should return specific message including all notes', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/message/' + message1.id)
+      .expect(200);
+
+    expect(response.body.name).toEqual(message1.name);
+    expect(response.body.notes).toHaveLength(2);
   });
 });
