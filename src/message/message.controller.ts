@@ -6,9 +6,12 @@ import {
   Param,
   UsePipes,
   ValidationPipe,
+  Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { UpdateMessageDto } from './dto/update-message.dto';
 
 @Controller('message')
 export class MessageController {
@@ -26,7 +29,18 @@ export class MessageController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.messageService.findById(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.messageService.findById(id);
+  }
+
+  @Put(':id')
+  @UsePipes(new ValidationPipe())
+  updateOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateMessageDto: UpdateMessageDto,
+  ) {
+    console.log({ updateMessageDto });
+
+    return;
   }
 }
