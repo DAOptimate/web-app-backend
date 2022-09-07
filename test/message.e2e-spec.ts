@@ -168,11 +168,8 @@ describe('MessageController (e2e)', () => {
    */
 
   it('/message:id (PUT) reject invalid requests', async () => {
-    // no id
-    await request(app.getHttpServer())
-      .put('/message')
-      .send({ isRead: true })
-      .expect(400);
+    // 404 if no id provided
+    await request(app.getHttpServer()).put('/message/').expect(404);
 
     // no request body
     await request(app.getHttpServer())
