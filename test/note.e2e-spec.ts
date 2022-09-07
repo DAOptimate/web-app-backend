@@ -10,7 +10,6 @@ import { NoteModule } from '../src/note/note.module';
 
 describe('NoteController (e2e)', () => {
   let app: INestApplication;
-  // let noteRepository: Repository<Note>;
   let messageRepository: Repository<Message>;
   let message1: Message;
   let message2: Message;
@@ -34,7 +33,6 @@ describe('NoteController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    // noteRepository = app.get('NoteRepository');
     messageRepository = app.get('MessageRepository');
 
     await app.init();
