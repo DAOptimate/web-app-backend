@@ -180,6 +180,15 @@ describe('MessageController (e2e)', () => {
     await request(app.getHttpServer())
       .put('/message/' + 'this_isnt_a_valid_id')
       .expect(400);
+
+    const messageNotFoundResponse = await request(app.getHttpServer())
+      .put('/message/' + '999999999')
+      .send({ isRead: true })
+      .expect(400);
+
+    expect(messageNotFoundResponse.body.message).toBe(
+      'Message not found, cannot create note.',
+    );
   });
 
   it('/message:id (PUT) can mark message as read or unread', async () => {
