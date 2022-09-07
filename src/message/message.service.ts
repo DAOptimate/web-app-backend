@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -27,11 +27,20 @@ export class MessageService {
     });
   }
 
-  update(id: number, updateMessageDto: UpdateMessageDto) {
-    return `This action updates a #${id} message`;
-  }
+  async updateById(id: number, updateMessageDto: UpdateMessageDto) {
+    const message = await this.messageRepository.findOneBy({ id });
 
-  remove(id: number) {
-    return `This action removes a #${id} message`;
+    if (!message)
+      throw new HttpException(
+        'Message not found, cannot create note.',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const updatedMessage = await this.messageRepository.save({
+      ...message,
+      ...updateMessageDto,
+    });
+
+    return updatedMessage;
   }
 }

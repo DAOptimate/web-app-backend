@@ -162,4 +162,60 @@ describe('MessageController (e2e)', () => {
     expect(response.body.name).toEqual(message1.name);
     expect(response.body.notes).toHaveLength(2);
   });
+
+  /**
+   * UPDATE
+   */
+
+  it('/message:id (PUT) reject invalid requests', async () => {
+    // 404 if no id provided
+    await request(app.getHttpServer()).put('/message/').expect(404);
+
+    // no request body
+    await request(app.getHttpServer())
+      .put('/message/' + message1.id)
+      .expect(400);
+
+    // invalid message id
+    await request(app.getHttpServer())
+      .put('/message/' + 'this_isnt_a_valid_id')
+      .expect(400);
+
+    const messageNotFoundResponse = await request(app.getHttpServer())
+      .put('/message/' + '999999999')
+      .send({ isRead: true })
+      .expect(400);
+
+    expect(messageNotFoundResponse.body.message).toBe(
+      'Message not found, cannot create note.',
+    );
+  });
+
+  it('/message:id (PUT) can mark message as read or unread', async () => {
+    // message1 should start as unread
+    const messageStart = await messageRepository.findOneBy({ id: message1.id });
+    expect(messageStart.isRead).toBe(false);
+
+    // mark as read
+    await request(app.getHttpServer())
+      .put('/message/' + message1.id)
+      .send({ isRead: true })
+      .expect(200);
+
+    // message1 should be read now
+    const messageRead = await messageRepository.findOneBy({ id: message1.id });
+    expect(messageRead.isRead).toBe(true);
+
+    // mark as unread
+    await request(app.getHttpServer())
+      .put('/message/' + message1.id)
+      .send({ isRead: false })
+      .expect(200);
+
+    // message1 should be unread again now
+    const messageUnread = await messageRepository.findOneBy({
+      id: message1.id,
+    });
+    expect(messageUnread.isRead).toBe(false);
+  });
 });
