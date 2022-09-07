@@ -39,8 +39,6 @@ export class MessageController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateMessageDto: UpdateMessageDto,
   ) {
-    console.log({ updateMessageDto });
-
-    return;
+    return this.messageService.updateById(id, updateMessageDto);
   }
 }
