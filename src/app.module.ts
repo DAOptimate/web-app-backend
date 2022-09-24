@@ -8,12 +8,7 @@ import { NoteModule } from './note/note.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'production'
-          ? '.prod.env'
-          : process.env.NODE_ENV === 'testing'
-          ? '.test.env'
-          : '.dev.env',
+      envFilePath: '.env',
       load: [dbConfig],
     }),
     TypeOrmModule.forRootAsync({
@@ -21,7 +16,6 @@ import { NoteModule } from './note/note.module';
       useFactory: async (configService: ConfigService) => {
         const databaseConfig = await configService.get('database');
         console.log({ databaseConfig });
-
         return {
           ...databaseConfig,
         };
